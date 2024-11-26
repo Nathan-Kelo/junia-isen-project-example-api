@@ -36,8 +36,30 @@ resource "azurerm_linux_web_app" "app" {
 
 }
 
+resource "azurerm_role_definition" "mongo" {
+  name        = "mongo-operator"
+  scope       = var.identity_id
+  description = "Custom role for MongoDB CRUD operations"
+
+  permissions {
+    actions = [
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/write",
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/read",
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/delete",
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections/write",
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections/delete",
+      "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections/read"
+    ]
+
+    not_actions = []
+  }
+}
+
+
 resource "azurerm_role_assignment" "role" {
   principal_id = azurerm_linux_web_app.app.identity[0].principal_id
   description  = "Manged Identity connection to Cosmos DB."
   scope        = var.identity_id
+  # Basic CRUD operations 
+  role_definition_id = azurerm_role_definition.mongo.role_definition_resource_id
 } 

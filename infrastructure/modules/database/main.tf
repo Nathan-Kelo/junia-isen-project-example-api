@@ -12,9 +12,9 @@ resource "azurerm_cosmosdb_account" "acc" {
 
   automatic_failover_enabled = false
   # This is to make sure it is only available through the private network (maybe)
-  public_network_access_enabled = false
+  public_network_access_enabled     = false
   is_virtual_network_filter_enabled = true
-  
+
   capabilities {
     name = "EnableMongo"
   }
