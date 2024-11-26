@@ -4,6 +4,7 @@ resource "random_integer" "ri" {
   max = 1000
 }
 
+#Create the service plan for the app
 resource "azurerm_service_plan" "linuxplan" {
   name                = "lin-plan-${random_integer.ri.id}"
   resource_group_name = var.resource_group_name
@@ -12,6 +13,7 @@ resource "azurerm_service_plan" "linuxplan" {
   sku_name            = "B1"
 }
 
+#Create the linux machine for the app to run
 resource "azurerm_linux_web_app" "app" {
   name                      = "app-${random_integer.ri.id}"
   resource_group_name       = var.resource_group_name
@@ -31,13 +33,14 @@ resource "azurerm_linux_web_app" "app" {
 
 
   }
-
+  #Set the Managed Identity to System
   identity {
     type = "SystemAssigned"
   }
 
 }
 
+#Custom role for RBAC of the app-service for the CosmosDB
 resource "azurerm_role_definition" "mongo" {
   name        = "mongo-operator"
   scope       = var.cosmosdb_account_id
@@ -57,7 +60,7 @@ resource "azurerm_role_definition" "mongo" {
   }
 }
 
-
+#Link the role to the Managed Identity of the app
 resource "azurerm_role_assignment" "role" {
   principal_id = azurerm_linux_web_app.app.identity[0].principal_id
   description  = "Manged Identity connection to Cosmos DB."

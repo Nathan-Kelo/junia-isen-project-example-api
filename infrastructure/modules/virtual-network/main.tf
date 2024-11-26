@@ -27,13 +27,13 @@ resource "azurerm_subnet" "private" {
 
 #Create subnet for the app service available publicly
 resource "azurerm_subnet" "public" {
-  name = "public-subnet"
-  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
+  name                 = "public-subnet"
+  resource_group_name  = azurerm_virtual_network.vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes = ["10.0.2.0/24"]
+  address_prefixes     = ["10.0.2.0/24"]
 
   delegation {
-    name="delegation"
+    name = "delegation"
     service_delegation {
       #The error message requested that I have this service delegated idk why
       name = "Microsoft.Web/serverFarms"
