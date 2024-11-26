@@ -3,6 +3,7 @@ resource "random_integer" "ri" {
   max = 1000
 }
 
+#Create virtual network to host app service and CosmosDB
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${random_integer.ri.id}"
   location            = var.location
@@ -11,9 +12,10 @@ resource "azurerm_virtual_network" "vnet" {
 
 }
 
+#Create subnet for the CosmosDB for private use only
 resource "azurerm_subnet" "private" {
   name                 = "private-subnet"
-  resource_group_name  = var.resource_group_name
+  resource_group_name  = azurerm_virtual_network.vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 
@@ -23,41 +25,35 @@ resource "azurerm_subnet" "private" {
   service_endpoints = ["Microsoft.AzureCosmosDB"]
 }
 
-# In way over my head
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
-#Private connection to CosmosDB to protect database
-resource "azurerm_private_endpoint" "cosmospe"{
-  name = "cosmos-endpoint"
-  location = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id = azurerm_subnet.private.id
+#Create subnet for the app service available publicly
+resource "azurerm_subnet" "public" {
+  name = "public-subnet"
+  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.2.0/24"]
 
-  #Select the resource to privately connect to
-  private_service_connection {
-    name="pe-cosmosdb-mongodb"
-    private_connection_resource_id = var.cosmos_connection_resource_id
-    is_manual_connection = false
-    #MongoDB is the only choice, but can never be too explicit
-    subresource_names = ["MongoDB"]
-  }
-
-  #Use the DNS defined below
-  private_dns_zone_group {
-    name="privatelink.mongodb.net"
-    private_dns_zone_ids = [azurerm_private_dns_zone.dns.id]
+  delegation {
+    name="delegation"
+    service_delegation {
+      #The error message requested that I have this service delegated idk why
+      name = "Microsoft.Web/serverFarms"
+    }
   }
 }
 
+
+#The private endpoint is in the database module, maybe need to set it somewhere else ?
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 #Create private DNS zone for private endpoint
 resource "azurerm_private_dns_zone" "dns" {
   name                = "privatelink.mongodb.net"
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
 }
 
 #Link DNS zone to virtual network
 resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
   name                  = "link"
-  resource_group_name   = var.resource_group_name
+  resource_group_name   = azurerm_virtual_network.vnet.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.dns.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
 }

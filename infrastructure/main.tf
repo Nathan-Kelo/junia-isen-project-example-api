@@ -8,11 +8,18 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+module "vnet-1" {
+  source                        = "./modules/virtual-network"
+  resource_group_name           = azurerm_resource_group.rg.name
+  location                      = azurerm_resource_group.rg.location
+}
+
 module "database-1" {
   source              = "./modules/database"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  private_subnet      = module.vnet-1.private_subnet
+  private_subnet_id      = module.vnet-1.private_subnet_id
+  private_dns_zone_id = module.vnet-1.private_dns_zone_id
 }
 
 module "app-service-1" {
@@ -20,12 +27,7 @@ module "app-service-1" {
   resource_group_name     = azurerm_resource_group.rg.name
   location                = azurerm_resource_group.rg.location
   mongo_connection_string = module.database-1.connection_string
-  identity_id             = module.database-1.identity_id
+  cosmosdb_account_id     = module.database-1.cosmosdb_account_id
+  subnet_id      = module.vnet-1.public_subnet_id
 }
 
-module "vnet-1" {
-  source              = "./modules/virtual-network"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  cosmos_connection_resource_id = module.database-1.identity_id
-}

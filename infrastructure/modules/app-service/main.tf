@@ -1,3 +1,4 @@
+#Random number generator for unique resource names on the cloud
 resource "random_integer" "ri" {
   min = 0
   max = 1000
@@ -12,10 +13,11 @@ resource "azurerm_service_plan" "linuxplan" {
 }
 
 resource "azurerm_linux_web_app" "app" {
-  name                = "app-${random_integer.ri.id}"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  service_plan_id     = azurerm_service_plan.linuxplan.id
+  name                      = "app-${random_integer.ri.id}"
+  resource_group_name       = var.resource_group_name
+  location                  = var.location
+  service_plan_id           = azurerm_service_plan.linuxplan.id
+  virtual_network_subnet_id = var.subnet_id
 
   site_config {
     #TODO docker registry stuff and things here
@@ -38,7 +40,7 @@ resource "azurerm_linux_web_app" "app" {
 
 resource "azurerm_role_definition" "mongo" {
   name        = "mongo-operator"
-  scope       = var.identity_id
+  scope       = var.cosmosdb_account_id
   description = "Custom role for MongoDB CRUD operations"
 
   permissions {
@@ -59,7 +61,7 @@ resource "azurerm_role_definition" "mongo" {
 resource "azurerm_role_assignment" "role" {
   principal_id = azurerm_linux_web_app.app.identity[0].principal_id
   description  = "Manged Identity connection to Cosmos DB."
-  scope        = var.identity_id
+  scope        = var.cosmosdb_account_id
   # Basic CRUD operations 
   role_definition_id = azurerm_role_definition.mongo.role_definition_resource_id
 } 

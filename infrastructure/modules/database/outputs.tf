@@ -4,7 +4,7 @@ output "connection_string" {
   sensitive   = true
 }
 
-output "identity_id" {
+output "cosmosdb_account_id" {
   value       = azurerm_cosmosdb_account.acc.id
   description = "Id of the role created to pass into the app service for scope designation."
 }

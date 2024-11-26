@@ -14,7 +14,7 @@ resource "azurerm_cosmosdb_account" "acc" {
   # This is to make sure it is only available through the private network (maybe)
   public_network_access_enabled     = false
   is_virtual_network_filter_enabled = true
-  
+
   capabilities {
     name = "EnableMongo"
   }
@@ -31,7 +31,7 @@ resource "azurerm_cosmosdb_account" "acc" {
   }
 
   virtual_network_rule {
-    id = var.private_subnet
+    id = var.private_subnet_id
   }
 }
 
@@ -39,4 +39,27 @@ resource "azurerm_cosmosdb_mongo_database" "db" {
   name                = "mongo_${random_integer.ri.id}"
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.acc.name
+}
+
+#Private connection to CosmosDB to protect database
+resource "azurerm_private_endpoint" "cosmospe" {
+  name                = "cosmos-endpoint"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.private_subnet_id
+
+  #Select the resource to privately connect to
+  private_service_connection {
+    name                           = "pe-cosmosdb-mongodb"
+    private_connection_resource_id = azurerm_cosmosdb_account.acc.id
+    is_manual_connection           = false
+    #MongoDB is the only choice, but can never be too explicit
+    subresource_names = ["MongoDB"]
+  }
+
+  #Use the DNS defined below
+  private_dns_zone_group {
+    name                 = "privatelink.mongodb.net"
+    private_dns_zone_ids = [var.private_dns_zone_id]
+  }
 }
