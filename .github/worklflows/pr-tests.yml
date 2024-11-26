@@ -1,6 +1,10 @@
 name: Pull Request Unit Tests
 
 on:
+  #psuh event à retirer apres les différents tests
+  push:
+    branches:
+      - feat/pull_request_actions
   pull_request:
     branches:
       - dev
