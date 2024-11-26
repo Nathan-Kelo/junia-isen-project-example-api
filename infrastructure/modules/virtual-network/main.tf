@@ -23,16 +23,41 @@ resource "azurerm_subnet" "private" {
   service_endpoints = ["Microsoft.AzureCosmosDB"]
 }
 
+# In way over my head
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
+#Private connection to CosmosDB to protect database
+resource "azurerm_private_endpoint" "cosmospe"{
+  name = "cosmos-endpoint"
+  location = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id = azurerm_subnet.private.id
 
-#I have no idea mashallah
-# resource "azurerm_private_dns_zone" "dns" {
-#   name                = "mydomain.com"
-#   resource_group_name = var.resource_group_name
-# }
+  #Select the resource to privately connect to
+  private_service_connection {
+    name="pe-cosmosdb-mongodb"
+    private_connection_resource_id = var.cosmos_connection_resource_id
+    is_manual_connection = false
+    #MongoDB is the only choice, but can never be too explicit
+    subresource_names = ["MongoDB"]
+  }
 
-# resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
-#   name                  = "test"
-#   resource_group_name   = var.resource_group_name
-#   private_dns_zone_name = azurerm_private_dns_zone.dns.name
-#   virtual_network_id    = azurerm_virtual_network.vnet.id
-# }
+  #Use the DNS defined below
+  private_dns_zone_group {
+    name="privatelink.mongodb.net"
+    private_dns_zone_ids = [azurerm_private_dns_zone.dns.id]
+  }
+}
+
+#Create private DNS zone for private endpoint
+resource "azurerm_private_dns_zone" "dns" {
+  name                = "privatelink.mongodb.net"
+  resource_group_name = var.resource_group_name
+}
+
+#Link DNS zone to virtual network
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
+  name                  = "link"
+  resource_group_name   = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.dns.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+}

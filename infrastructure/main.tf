@@ -27,4 +27,5 @@ module "vnet-1" {
   source              = "./modules/virtual-network"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  cosmos_connection_resource_id = module.database-1.identity_id
 }

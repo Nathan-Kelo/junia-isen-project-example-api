@@ -5,3 +5,7 @@ variable "resource_group_name" {
 variable "location" {
   type = string
 }
+
+variable "cosmos_connection_resource_id" {
+  type = string
+}
