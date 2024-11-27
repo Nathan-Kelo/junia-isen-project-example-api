@@ -1,0 +1,28 @@
+name: Lint Code
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9' 
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+      working-directory: ./api
+
+    - name: Run linter
+      run: |
+        flake8 ./api
