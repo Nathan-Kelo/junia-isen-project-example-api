@@ -21,17 +21,18 @@ resource "azurerm_linux_web_app" "app" {
   service_plan_id           = azurerm_service_plan.linuxplan.id
   virtual_network_subnet_id = var.subnet_id
 
-  site_config {
-    #TODO docker registry stuff and things here
-    application_stack {
-      python_version = "3.9"
-      # docker_image_name = 
-      # docker_registry_url = 
-      # docker_registry_password =
-      # docker_registry_username =  
+  #Pass the MongoDB URI to the application through the environment variables
+  app_settings = tomap({
+    MONGO_URL = var.mongo_connection_string
     }
+  )
 
-
+  site_config {
+    #Setup docker deployment
+    application_stack {
+      docker_image_name   = "nathan-kelo/junia-isen-project-example-api:dev"
+      docker_registry_url = "https://ghcr.io"
+    }
   }
   #Set the Managed Identity to System
   identity {
