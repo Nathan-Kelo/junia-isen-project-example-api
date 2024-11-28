@@ -2,3 +2,4 @@ Flask==2.3.2
 Werkzeug==2.3.7
 pytest==7.4.0
 pymongo
+python-dotenv
