@@ -30,3 +30,8 @@ This project demonstrates a simple application deployed on Azure using Terraform
     ```bash
     pytest api/tests
 
+### Resources 
+
+Used this tutorial for pushing docker image to packages.
+https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions
+
