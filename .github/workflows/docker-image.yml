@@ -32,4 +32,5 @@ jobs:
       with:
         context: "{{defaultContext}}:api"
         push: true
-        tags: ${{ github.repository }}:${{github.ref_name}}
+        tags: |
+          ${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ github.ref_name }}}
