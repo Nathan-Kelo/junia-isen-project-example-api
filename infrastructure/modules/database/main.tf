@@ -63,7 +63,7 @@ resource "azurerm_private_endpoint" "cosmospe" {
 
   #Use the DNS defined in the virtual-network module
   private_dns_zone_group {
-    name                 = "privatelink.mongodb.net"
+    name                 = "test-name-for-now"
     private_dns_zone_ids = [var.private_dns_zone_id]
   }
 }

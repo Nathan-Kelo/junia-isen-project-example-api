@@ -23,6 +23,7 @@ module "database-1" {
   location            = azurerm_resource_group.rg.location
   private_subnet_id   = module.vnet-1.private_subnet_id
   private_dns_zone_id = module.vnet-1.private_dns_zone_id
+  private_dns_zone_name = module.vnet-1.private_dns_zone_name
 }
 
 #Create the app

@@ -47,6 +47,7 @@ resource "azurerm_role_definition" "mongo" {
   description = "Custom role for MongoDB CRUD operations"
 
   permissions {
+    #TODO need to check if these shoudnt be data actions instead
     actions = [
       "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/write",
       "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/read",
@@ -61,6 +62,8 @@ resource "azurerm_role_definition" "mongo" {
 }
 
 #Link the role to the Managed Identity of the app
+#TODO dont know why when i check on the IAM of the rg and the cosmos app it appears
+#but not in the app-service
 resource "azurerm_role_assignment" "role" {
   principal_id = azurerm_linux_web_app.app.identity[0].principal_id
   description  = "Manged Identity connection to Cosmos DB."

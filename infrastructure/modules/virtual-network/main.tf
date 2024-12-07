@@ -41,12 +41,11 @@ resource "azurerm_subnet" "public" {
   }
 }
 
-
-#The private endpoint is in the database module, maybe need to set it somewhere else ?
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 #Create private DNS zone for private endpoint
 resource "azurerm_private_dns_zone" "dns" {
-  name                = "privatelink.mongodb.net"
+  #Private dns zone MUST follow a specific naming convention
+  #https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns
+  name                = "privatelink.mongo.cosmos.azure.com"
   resource_group_name = azurerm_virtual_network.vnet.resource_group_name
 }
 
