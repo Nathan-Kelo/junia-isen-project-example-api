@@ -1,24 +1,35 @@
-from flask import Flask, jsonify
-from pymongo import MongoClient
 import os
 
+from dotenv import load_dotenv
+from flask import Flask, jsonify,request
+from pymongo import MongoClient
+
 app = Flask(__name__)
+#Force refresh .env variables if there is a change
+load_dotenv(override=True)
 
 # Get the MongoDB URL from the environment variables
-mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+mongo_url = os.environ.get("MONGO_URL", "")
+
 # Connect to mongodb 
 client = MongoClient(mongo_url)
 
 @app.route("/baskets")
 def baskets():
-    # Return the list of baskets from the database
     db = client["projet_cloud"]
     baskets = db["baskets"]
+    
+    # Create dummy data to insert
+    baskets.insert_many([
+      {"product":"car"},{"product":"house"},{"product":"dog"}
+    ])
+    
+    # Return the list of baskets from the database
     result = list(baskets.find())
     # Make ObjectID serializable
     for basket in result:
         basket["_id"] = str(basket["_id"])
-    return jsonify(result)
+    return jsonify({"status":"success","results":result})
 
 @app.route("/items")
 def items():
