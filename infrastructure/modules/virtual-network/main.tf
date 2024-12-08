@@ -40,19 +40,3 @@ resource "azurerm_subnet" "public" {
     }
   }
 }
-
-#Create private DNS zone for private endpoint
-resource "azurerm_private_dns_zone" "dns" {
-  #Private dns zone MUST follow a specific naming convention
-  #https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns
-  name                = "privatelink.mongo.cosmos.azure.com"
-  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
-}
-
-#Link DNS zone to virtual network
-resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
-  name                  = "link"
-  resource_group_name   = azurerm_virtual_network.vnet.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.dns.name
-  virtual_network_id    = azurerm_virtual_network.vnet.id
-}
