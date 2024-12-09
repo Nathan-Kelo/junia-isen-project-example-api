@@ -49,3 +49,7 @@ This project demonstrates a simple application deployed on Azure using Terraform
 The provisioned architecture creates an app service with a System Managed identity and a CosmosDB Database with a MongoDB instance. The CosmosDB is private only accessible through a private endpoint available in the private subnet. Furthermore the identity is assigned to a custom role with read and write access.
 
 ![architecture image](images/architecture.png)
+
+### Resources
+
+Used this [tutorial](https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions) for pushing docker image to packages.
