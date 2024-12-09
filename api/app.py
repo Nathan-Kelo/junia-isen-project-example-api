@@ -1,47 +1,51 @@
 import os
-from sys import stdout
 import logging
+from sys import stdout
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
-from azure.cosmos.cosmos_client import CosmosClient
-#This is because we are using Python 3.9 if we modern python this
-#pkg is deprecated
-from azure.cosmos.errors import HTTPFailure
 from pymongo import MongoClient
 
-#Force refresh .env everytimes
-load_dotenv(override=True)
-
-logger=logging.getLogger(__name__)
-logging.basicConfig(stream=stdout)
-logger.setLevel(logging.DEBUG)
-
-
-ACCOUNT_URI=os.environ.get("ACCOUNT_URI","")
-ACCOUNT_KEY=os.environ.get("ACCOUNT_KEY","")
-
-logger.debug(f"ACCOUNT_URI: {ACCOUNT_URI[:4]}")
 
 app = Flask(__name__)
-try:
-  Cclient=CosmosClient(
-    url_connection=ACCOUNT_URI,
-  )
-except Exception as e:
-  logger.error(f"Failed to connect to CosmosDB service. {e.with_traceback(e.__traceback__)}")
-else:
-  logger.info("Connected to CosmosDB service.")
 
-try:
-  Mclient=MongoClient(
-    host=ACCOUNT_URI
-  ) 
-except Exception as e:
-  logger.error(f"Failed to connect to MongoDB service. {e.with_traceback(e.__traceback__)}")
-else:
-  logger.info("Connected to MongoDB service.")
+# Get the MongoDB URL from the environment variables
+mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+# Connect to mongodb 
+client = MongoClient(mongo_url)
 
+@app.route("/baskets")
+def baskets():
+    # Return the list of baskets from the database
+    db = client["projet_cloud"]
+    baskets = db["baskets"]
+    result = list(baskets.find())
+    # Make ObjectID serializable
+    for basket in result:
+        basket["_id"] = str(basket["_id"])
+    return jsonify(result)
+
+@app.route("/items")
+def items():
+    # Return the list of items from the database
+    db = client["projet_cloud"]
+    items = db["items"]
+    result = list(items.find())
+    # Make ObjectID serializable
+    for basket in result:
+        basket["_id"] = str(basket["_id"])
+    return jsonify(result)
+
+@app.route("/users")
+def users():
+    # Return the list of users from the database
+    db = client["projet_cloud"]
+    users = db["users"]
+    result = list(users.find())
+    # Make ObjectID serializable
+    for basket in result:
+        basket["_id"] = str(basket["_id"])
+    return jsonify(result)
 
 @app.route("/")
 def home():

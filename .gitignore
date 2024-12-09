@@ -40,4 +40,5 @@ override.tf.json
 terraform.rc
 
 .env
+cc_env/
 __pycache__/
