@@ -1,14 +1,4 @@
 import os
-<<<<<<< HEAD
-import logging
-from sys import stdout
-
-from dotenv import load_dotenv
-from flask import Flask, jsonify
-from pymongo import MongoClient
-
-=======
->>>>>>> dev
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify,request
