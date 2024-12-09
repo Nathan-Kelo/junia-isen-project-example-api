@@ -1,18 +1,31 @@
 import os
+import logging
+from sys import stdout
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify,request
+from flask import Flask, jsonify
 from pymongo import MongoClient
 
 app = Flask(__name__)
+
 #Force refresh .env variables if there is a change
 load_dotenv(override=True)
 
 # Get the MongoDB URL from the environment variables
-mongo_url = os.environ.get("MONGO_URL", "")
+MONGO_URL = os.environ.get("MONGO_URL", "")
+
+# Setup basic logging
+logger=logging.getLogger("werkzeug")
+logging.basicConfig(stream=stdout)
+logger.setLevel(logging.INFO)
 
 # Connect to mongodb 
-client = MongoClient(mongo_url)
+try:
+  client = MongoClient(MONGO_URL)
+except Exception as e:
+  logger.error("Failed to connect to MongoDB.",exc_info=True)
+else:
+  logger.info("Connected to MongoDB")  
 
 @app.route("/baskets")
 def baskets():
