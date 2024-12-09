@@ -70,24 +70,5 @@ def users():
 def home():
     return jsonify({"message": "Welcome to the Shop API!"})
 
-@app.route("/test")
-def db_connection_test():
-  database_name = 'testDatabase'
-  try:
-    database = Cclient.CreateDatabase({'id': database_name})
-  except HTTPFailure:
-    database = Cclient.ReadDatabase("dbs/" + database_name)
-  return jsonify(database)
-  
-@app.route("/test2")
-def db_connection_test_2():
-  database_name = 'testDatabase'
-  database = Mclient.get_database(database_name)
-  id=database.dummy_collection.insert_one({
-    'name':"John doe",
-    'addy':"ur mother"
-  }).inserted_id
-  return jsonify({"status":"Created a new document.","return":id})
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
