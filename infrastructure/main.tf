@@ -1,25 +1,37 @@
-provider "azurerm" {
-  features {}
+resource "random_integer" "ri" {
+  min = 0
+  max = 10000
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "shop-app-rg"
-  location = "East US"
+#Create the resoure group for the project
+resource "azurerm_resource_group" "rg" {
+  name     = "rg-cloud-shop-project-${random_integer.ri.id}"
+  location = var.location
 }
 
-resource "azurerm_app_service_plan" "example" {
-  name                = "shop-app-plan"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+#Create the virtual network
+module "vnet-1" {
+  source              = "./modules/virtual-network"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 }
 
-resource "azurerm_app_service" "example" {
-  name                = "shop-app"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  app_service_plan_id = azurerm_app_service_plan.example.id
+#Create the database
+module "database-1" {
+  source              = "./modules/database"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  private_subnet_id   = module.vnet-1.private_subnet_id
+  vnet_id             = module.vnet-1.virtual_network_id
 }
+
+#Create the app
+module "app-service-1" {
+  source                  = "./modules/app-service"
+  resource_group_name     = azurerm_resource_group.rg.name
+  location                = azurerm_resource_group.rg.location
+  mongo_connection_string = module.database-1.connection_string
+  cosmosdb_account_id     = module.database-1.cosmosdb_account_id
+  subnet_id               = module.vnet-1.public_subnet_id
+}
+
