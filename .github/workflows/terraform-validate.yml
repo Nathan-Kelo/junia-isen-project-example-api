@@ -1,9 +1,11 @@
 name: Push feature branches tests
 
 on: 
-  push:
-    branches:
-      - '*'
+  workflow_call:
+    outputs:
+      init-status:
+        description: Status of init command
+        value: ${{ jobs.check-code.outputs.output }}
 
 env:
   TF_LOG: INFO #for getting logs in case of error
@@ -17,17 +19,19 @@ jobs:
       run:
         shell: bash
         working-directory: ./infrastructure
+    
+    outputs:
+      output: ${{ steps.init.outputs.init-status}}
 
     steps: 
-        - name: Checkout
+        - name: Checkout    
           uses: actions/checkout@v4
 
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v3
-        #   with:
-        #     terraform_version: ">=1.1.0"
         
         - name: Terraform init
+          id: init
           run: terraform init
         
         - name: Terraform Format
@@ -37,4 +41,4 @@ jobs:
           # Run even if formatting fails
           if: success() || failure()
           run: terraform validate -no-color #checks syntax
-    
+      
