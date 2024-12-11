@@ -15,10 +15,10 @@ jobs:
   check-code:
     runs-on : ubuntu-latest
 
-    defaults: 
-      run:
-        shell: bash
-        working-directory: ./infrastructure
+    #defaults: 
+      #run:
+        #shell: bash
+        #working-directory: ./infrastructure
 
     steps: 
         - name: Checkout
