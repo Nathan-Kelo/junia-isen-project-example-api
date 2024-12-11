@@ -1,0 +1,39 @@
+name: Push feature branches tests
+
+on: 
+  push:
+    branches:
+      - '*'
+      
+env:
+  TF_LOG: INFO #for getting logs in case of error
+  TF_INPUT: false #disables user inputs
+
+jobs:
+  check-code:
+    runs-on : ubuntu-latest
+
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./infrastructure
+
+    steps: 
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: "1.1.0"
+        
+        - name: Terraform init
+          run: terraform init
+        
+        - name: Terraform Format
+          run: terraform fmt -check #checks formatting
+
+        - name: Terraform Validate
+          # Run even if formatting fails
+          if: success() || failure()
+          run: terraform validate -no-color #checks syntax
