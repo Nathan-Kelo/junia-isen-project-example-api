@@ -11,8 +11,7 @@ provider "random" {
 }
 
 provider "http" {
-  source = "hashicorp/http"
-  version = "3.4.5"
+  
 }
 
 #Setup required infra to test database deployment
