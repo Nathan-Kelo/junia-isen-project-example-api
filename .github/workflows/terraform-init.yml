@@ -1,11 +1,11 @@
-name : Push feature branches tests
+name: Push feature branches tests
 
-on : 
-    push :
-        branches :
-            - '*'
-            - '!main'
-            - '!dev'
+on: 
+  push:
+    branches:
+      - '*'
+      - '!main'
+      - '!dev'
 
 env:
   TF_LOG: INFO #for getting logs in case of error
