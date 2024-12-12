@@ -1,7 +1,8 @@
 name: Push feature branches tests
 
 on: 
-  workflow_dispatch
+  workflow_dispatch:
+  push:
 
 env:
   TF_LOG: INFO #for getting logs in case of error
