@@ -40,3 +40,37 @@ resource "azurerm_subnet" "public" {
     }
   }
 }
+
+resource "azurerm_subnet" "gateway_subnet" {
+  resource_group_name  = azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  #Dosent need a default name for gateway stuff and things
+  name = "AppGatewaySubnet"
+
+  #I think /28 is also strongly recommended to allow auto scaling
+  address_prefixes = ["10.0.4.0/28"]
+}
+
+# resource "azurerm_subnet" "firewall_subnet" {
+#   resource_group_name  = azurerm_virtual_network.vnet.resource_group_name
+#   virtual_network_name = azurerm_virtual_network.vnet.name
+#   #Must have this default name
+#   name = "AzureFirewallSubnet"
+
+#   #I think /26 is also strongly recommended to allow auto scaling
+#   address_prefixes = ["10.0.3.0/26"]
+# }
+
+# resource "azurerm_firewall" "firewall" {
+#   resource_group_name = azurerm_virtual_network.vnet.resource_group_name
+#   location            = azurerm_virtual_network.vnet.location
+#   name                = "waf"
+#   sku_name            = "AZFW_VNet"
+#   sku_tier            = "Standard"
+
+#   ip_configuration {
+#     name                 = "configuration"
+#     subnet_id            = azurerm_subnet.firewall_subnet.id
+#     public_ip_address_id = azurerm_public_ip.ip.id
+#   }
+# }

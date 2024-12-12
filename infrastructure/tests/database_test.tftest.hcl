@@ -11,7 +11,7 @@ provider "random" {
 }
 
 provider "http" {
-  
+
 }
 
 #Setup required infra to test database deployment

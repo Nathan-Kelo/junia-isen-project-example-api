@@ -35,3 +35,13 @@ module "app-service-1" {
   subnet_id               = module.vnet-1.public_subnet_id
 }
 
+module "gateway-1" {
+  source               = "./modules/gateway"
+  resource_group_name  = azurerm_resource_group.rg.name
+  location             = azurerm_resource_group.rg.location
+  virtual_network_name = module.vnet-1.virtual_network_name
+  gateway_subnet_id    = module.vnet-1.gateway_subnet_id
+  app_service_fqdm     = module.app-service-1.app_url
+
+}
+
