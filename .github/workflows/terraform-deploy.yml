@@ -7,7 +7,7 @@ on:
 env:
   TF_LOG: INFO #for getting logs in case of error
   TF_INPUT: false #disables user inputs
-  SUBSCRIPTION_ID:
+  SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
 
 jobs:
   deploy:
@@ -42,7 +42,7 @@ jobs:
       - name: Generate plan
         id: plan
         if: success() || failure()
-        run: terraform plan -out build.tfplan
+        run: terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -out=build.tfplan
 
     # Add a comment to pull requests with plan results
       - name: Add Plan Comment
