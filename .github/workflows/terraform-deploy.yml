@@ -7,6 +7,7 @@ on:
 env:
   TF_LOG: INFO #for getting logs in case of error
   TF_INPUT: false #disables user inputs
+  SUBSCRIPTION_ID:
 
 jobs:
   deploy:
@@ -46,6 +47,7 @@ jobs:
     # Add a comment to pull requests with plan results
       - name: Add Plan Comment
         id: comment
+        if: steps.plan.outcome == 'success'
         uses: actions/github-script@v7
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
@@ -69,3 +71,30 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
+      - name: Post Plan Failure 
+        if: steps.plan.outcome == 'failure'
+        uses: actions/github-script@v6
+        env:
+          PLAN_FAIL: "terraform\n${{ steps.plan.outputs.stderr }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        
+            <details><summary>Show Plan Error</summary>
+            
+            \`\`\`${process.env.PLAN_FAIL}\`\`\`
+            
+            </details>
+            
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+              
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+            
