@@ -1,0 +1,67 @@
+name: Terraform plan
+
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  TF_LOG: INFO #for getting logs in case of error
+  TF_INPUT: false #disables user inputs
+
+jobs:
+  deploy:
+    runs-on: ubuntu-last
+
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.0"
+      
+      - name: Terraform init
+        id: init
+        run: terraform init
+      
+      - name: Terraform Format
+        run: terraform fmt -check #checks formatting
+
+      - name: Terraform Validate
+        # Run even if formatting fails
+        if: success() || failure()
+        run: terraform validate -no-color #checks syntax
+
+        #Plan section
+
+      - name: Generate plan
+        id: plan
+        run: terraform plan -out build.tfplan
+
+    # Add a comment to pull requests with plan results
+      - name: Add Plan Comment
+        id: comment
+        uses: actions/github-script@v7
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        
+            Show Plan
+            
+            \`\`\`${process.env.PLAN}\`\`\`
+            
+            
+            
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+              
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
