@@ -1,3 +1,7 @@
-output "app_url" {
-  value = module.app-service-1.app_url
+output "app_fqdm" {
+  value = module.app-service-1.app_fqdm
+}
+
+output "gateway_frontend_ip" {
+  value = module.gateway-1.gateway_frontend_ip
 }

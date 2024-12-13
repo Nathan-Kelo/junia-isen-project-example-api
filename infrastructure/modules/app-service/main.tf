@@ -20,7 +20,8 @@ resource "azurerm_linux_web_app" "app" {
   location                  = var.location
   service_plan_id           = azurerm_service_plan.linuxplan.id
   virtual_network_subnet_id = var.subnet_id
-
+  #Deactivate public access so that it must pass through the gateway instead
+  public_network_access_enabled = true
   #Pass the MongoDB URI to the application through the environment variables
   app_settings = tomap({
     MONGO_URL = var.mongo_connection_string
@@ -40,6 +41,48 @@ resource "azurerm_linux_web_app" "app" {
   }
 
 }
+
+//WIP to create a private endpoint for app service to allow only specific traffic
+/*
+#Create private DNS zone for private endpoint
+resource "azurerm_private_dns_zone" "dns" {
+  #Private dns zone MUST follow a specific naming convention
+  #https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns
+  name                = "privatelink.azurewebsites.net"
+  resource_group_name = var.resource_group_name
+}
+
+#Link DNS zone to virtual network
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
+  name                  = "link"
+  resource_group_name   = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.dns.name
+  virtual_network_id    = var.vnet_id
+}
+
+resource "azurerm_private_endpoint" "cosmospe" {
+  name                = "cosmos-endpoint"
+  location            = azurerm_cosmosdb_account.acc.location
+  resource_group_name = azurerm_cosmosdb_account.acc.resource_group_name
+  subnet_id           = var.private_subnet_id
+
+  #Select the resource to privately connect to
+  private_service_connection {
+    name                           = "pe-cosmosdb-mongodb"
+    private_connection_resource_id = azurerm_linux_web_app.app.id
+    is_manual_connection           = false
+    #MongoDB is the only choice, but can never be too explicit
+    subresource_names = ["sites"]
+  }
+
+  #Use the DNS defined in the virtual-network module
+  private_dns_zone_group {
+    name                 = "test-name-for-now"
+    private_dns_zone_ids = [azurerm_private_dns_zone.dns.id]
+  }
+}
+*/
+
 
 #Custom role for RBAC of the app-service for the CosmosDB
 resource "azurerm_role_definition" "mongo" {

@@ -19,10 +19,11 @@ resource "azurerm_subnet" "private" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 
-  private_endpoint_network_policies             = "Enabled"
+  //private_endpoint_network_policies             = "Enabled"
   private_link_service_network_policies_enabled = false
-
-  service_endpoints = ["Microsoft.AzureCosmosDB"]
+  
+  // following the tutorial there is no service endpoint needed ?
+  //service_endpoints = ["Microsoft.AzureCosmosDB"]
 }
 
 #Create subnet for the app service available publicly
