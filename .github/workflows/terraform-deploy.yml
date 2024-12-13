@@ -51,9 +51,10 @@ jobs:
         id: plan
         if: success() || failure()
         run: terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -out=build.tfplan
+        
 
-    # Add a comment to pull requests with plan results
-      - name: Add Plan Comment
+      - name: Add Commit Comment
+        if: github.event_name == 'push'
         id: comment
         uses: actions/github-script@v7
         env:
@@ -63,19 +64,17 @@ jobs:
           script: |
             const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-        
+            
             Show Plan
             
             \`\`\`${process.env.PLAN}\`\`\`
             
-            
-            
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
               
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            github.rest.repos.createCommitComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              commit_sha: context.sha,
               body: output
             })
 
