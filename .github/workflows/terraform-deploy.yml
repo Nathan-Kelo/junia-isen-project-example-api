@@ -7,7 +7,6 @@ on:
 env:
   TF_LOG: INFO #for getting logs in case of error
   TF_INPUT: false #disables user inputs
-  SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
 
 jobs:
   deploy:
@@ -21,6 +20,13 @@ jobs:
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: 'Azure Login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
