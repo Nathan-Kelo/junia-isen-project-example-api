@@ -1,5 +1,5 @@
 import os
-import json
+from bson import json_util
 import logging
 from sys import stdout
 
@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 
 # Connect to mongodb 
 try:
-  client = MongoClient(MONGO_URL)
+    client = MongoClient(MONGO_URL)
 except Exception as e:
   logger.error("Failed to connect to MongoDB.",exc_info=True)
 else:
@@ -35,13 +35,13 @@ def populate_db():
     users = db["users"]
     
     with open("./source_data/baskets.json") as f:
-        baskets_data = json.load(f)
-    
+        baskets_data = json_util.loads(f.read())
+
     with open("./source_data/items.json") as f:
-        items_data = json.load(f)
+        items_data = json_util.loads(f.read())
 
     with open("./source_data/users.json") as f:
-        users_data = json.load(f)
+        users_data = json_util.loads(f.read())
 
     # Send the data to each table
     baskets.insert_many(baskets_data)
@@ -84,7 +84,7 @@ def users():
 def index():
     return app.send_static_file("index.html")
 
-@app.route("/update_db")
+@app.route("/update_db" , methods=["POST"])
 def update_db():
     try:
         populate_db()
