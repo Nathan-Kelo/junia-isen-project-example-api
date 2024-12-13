@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "6745f499a7a9bcb426ed772c"
+  },
+  "user_id": 1,
+  "item_id_list": [
+    2,
+    5,
+    10
+  ],
+  "total_amount": 124.97
+},
+{
+  "_id": {
+    "$oid": "6745f499a7a9bcb426ed772d"
+  },
+  "user_id": 2,
+  "item_id_list": [
+    3,
+    7,
+    14,
+    18
+  ],
+  "total_amount": 57.72
+},
+{
+  "_id": {
+    "$oid": "6745f499a7a9bcb426ed772e"
+  },
+  "user_id": 3,
+  "item_id_list": [
+    6,
+    16
+  ],
+  "total_amount": 99.48
+},
+{
+  "_id": {
+    "$oid": "6745f499a7a9bcb426ed772f"
+  },
+  "user_id": 4,
+  "item_id_list": [],
+  "total_amount": 0
+}]

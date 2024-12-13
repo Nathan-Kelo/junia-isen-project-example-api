@@ -4,3 +4,5 @@ pytest==7.4.0
 pymongo
 python-dotenv
 flake8
+opentelemetry-distro==0.43b0
+opentelemetry-exporter-otlp==1.22.0

@@ -43,7 +43,7 @@ resource "azurerm_linux_web_app" "app" {
 
 #Custom role for RBAC of the app-service for the CosmosDB
 resource "azurerm_role_definition" "mongo" {
-  name        = "mongo-operator"
+  name        = "mongo-operator-${random_integer.ri.id}"
   scope       = var.cosmosdb_account_id
   description = "Custom role for MongoDB CRUD operations"
 
