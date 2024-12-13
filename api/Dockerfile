@@ -16,4 +16,4 @@ ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 
 EXPOSE 5000
 
-CMD ["opentelemetry-instrument", "app.py"]
+CMD ["opentelemetry-instrument", "python", "app.py"]
