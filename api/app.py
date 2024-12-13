@@ -48,13 +48,6 @@ def populate_db():
     items.insert_many(items_data)
     users.insert_many(users_data)
 
-try:
-    populate_db()
-except Exception as e:
-    logger.error("Failed to populate MongoDB")
-else:
-    logger.info("Populated MongoDB")
-    
 @app.route("/baskets")
 def baskets():
     db = client["projet_cloud"]
@@ -88,8 +81,19 @@ def users():
     return jsonify(result)
 
 @app.route("/")
-def home():
+def index():
     return app.send_static_file("index.html")
+
+@app.route("/update_db")
+def update_db():
+    try:
+        populate_db()
+    except Exception as e:
+        logger.error("Failed to populate MongoDB",exc_info=True)
+        return jsonify({"status":"failed","message":"Failed to populate MongoDB"})
+    else:
+        logger.info("Populated MongoDB")
+        return jsonify({"status":"success","message":"Populated MongoDB"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

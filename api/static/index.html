@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Computing Project</title>
-    <!-- Including Tailwind CSS via CDN [[5]] -->
+    <!-- Including Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
@@ -34,6 +34,16 @@
         </li>
     </ul>
 
+    <!-- Populate DB Button -->
+    <div class="w-1/2 mb-4">
+        <form action="/update_db" method="POST">
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
+                Populate DB
+            </button>
+        </form>
+    </div>
+
+    <!-- Existing Buttons -->
     <div class="space-x-4 w-1/2 text-center">
         <a href="/baskets">
             <button class="bg-blue-500 w-1/5 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
