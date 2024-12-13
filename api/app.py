@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 from sys import stdout
 
@@ -27,17 +28,37 @@ except Exception as e:
 else:
   logger.info("Connected to MongoDB")  
 
+def populate_db():
+    db = client["projet_cloud"]
+    baskets = db["baskets"]
+    items = db["items"]
+    users = db["users"]
+    
+    with open("./source_data/baskets.json") as f:
+        baskets_data = json.load(f)
+    
+    with open("./source_data/items.json") as f:
+        items_data = json.load(f)
+
+    with open("./source_data/users.json") as f:
+        users_data = json.load(f)
+
+    # Send the data to each table
+    baskets.insert_many(baskets_data)
+    items.insert_many(items_data)
+    users.insert_many(users_data)
+
+try:
+    populate_db()
+except Exception as e:
+    logger.error("Failed to populate MongoDB")
+else:
+    logger.info("Populated MongoDB")
+    
 @app.route("/baskets")
 def baskets():
     db = client["projet_cloud"]
     baskets = db["baskets"]
-    
-    # Create dummy data to insert
-    baskets.insert_many([
-      {"product":"car"},{"product":"house"},{"product":"dog"}
-    ])
-    
-    # Return the list of baskets from the database
     result = list(baskets.find())
     # Make ObjectID serializable
     for basket in result:
@@ -68,7 +89,7 @@ def users():
 
 @app.route("/")
 def home():
-    return jsonify({"message": "Welcome to the Shop API!"})
+    return app.send_static_file("index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

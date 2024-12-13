@@ -1,0 +1,120 @@
+[{
+  "_id": 1,
+  "name": "Wireless Mouse",
+  "category": "Electronics",
+  "price": 25.99
+},
+{
+  "_id": 2,
+  "name": "Bluetooth Headphones",
+  "category": "Electronics",
+  "price": 59.99
+},
+{
+  "_id": 3,
+  "name": "Yoga Mat",
+  "category": "Fitness",
+  "price": 19.99
+},
+{
+  "_id": 4,
+  "name": "Stainless Steel Water Bottle",
+  "category": "Home & Kitchen",
+  "price": 15.49
+},
+{
+  "_id": 5,
+  "name": "LED Desk Lamp",
+  "category": "Home & Kitchen",
+  "price": 29.99
+},
+{
+  "_id": 6,
+  "name": "Running Shoes",
+  "category": "Footwear",
+  "price": 49.99
+},
+{
+  "_id": 7,
+  "name": "Organic Green Tea",
+  "category": "Groceries",
+  "price": 9.99
+},
+{
+  "_id": 8,
+  "name": "Smartphone Stand",
+  "category": "Accessories",
+  "price": 12.99
+},
+{
+  "_id": 9,
+  "name": "Cotton T-Shirt",
+  "category": "Apparel",
+  "price": 14.99
+},
+{
+  "_id": 10,
+  "name": "Leather Wallet",
+  "category": "Accessories",
+  "price": 34.99
+},
+{
+  "_id": 11,
+  "name": "Kitchen Knife Set",
+  "category": "Home & Kitchen",
+  "price": 39.99
+},
+{
+  "_id": 12,
+  "name": "Digital Alarm Clock",
+  "category": "Electronics",
+  "price": 22.49
+},
+{
+  "_id": 13,
+  "name": "Backpack",
+  "category": "Apparel",
+  "price": 27.99
+},
+{
+  "_id": 14,
+  "name": "Ceramic Coffee Mug",
+  "category": "Home & Kitchen",
+  "price": 8.99
+},
+{
+  "_id": 15,
+  "name": "Electric Kettle",
+  "category": "Home Appliances",
+  "price": 24.99
+},
+{
+  "_id": 16,
+  "name": "Fitness Tracker",
+  "category": "Fitness",
+  "price": 49.49
+},
+{
+  "_id": 17,
+  "name": "Novel: The Great Adventure",
+  "category": "Books",
+  "price": 12.99
+},
+{
+  "_id": 18,
+  "name": "Scented Candles Set",
+  "category": "Home & Kitchen",
+  "price": 18.75
+},
+{
+  "_id": 19,
+  "name": "Wireless Charger",
+  "category": "Electronics",
+  "price": 19.99
+},
+{
+  "_id": 20,
+  "name": "Summer Dress",
+  "category": "Apparel",
+  "price": 29.99
+}]
