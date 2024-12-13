@@ -11,9 +11,6 @@ env:
 permissions:
   id-token: write
   contents: read
-  issues: write     
-  pull-requests: write  
-  statuses: write   
 
 jobs:
   deploy:
@@ -50,36 +47,14 @@ jobs:
 
         #Plan section
 
-      - name: Generate plan
+      - name: Generate and Show Plan
         id: plan
         if: success() || failure()
-        run: terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -out=build.tfplan
-        
+        run: |
+          echo "Terraform Plan Output:"
+          echo "-------------------"
+          terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=build.tfplan
 
-      - name: Add Commit Comment
-        if: github.event_name == 'push'
-        id: comment
-        uses: actions/github-script@v7
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            
-            Show Plan
-            
-            \`\`\`${process.env.PLAN}\`\`\`
-            
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
-              
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: output
-            })
 
   
 
