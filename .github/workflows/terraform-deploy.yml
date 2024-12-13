@@ -8,6 +8,10 @@ env:
   TF_LOG: INFO #for getting logs in case of error
   TF_INPUT: false #disables user inputs
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
