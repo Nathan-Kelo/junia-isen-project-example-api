@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev
-      - combine-workflow
+      - combine_workflow
   pull_request:
     branches:
       - dev
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/combine-workflow'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -62,7 +62,7 @@ jobs:
         run: flake8 ./api
 
   test:
-    if: github.event_name == 'push' && github.event.push.base.ref == 'refs/heads/combine-workflow'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
