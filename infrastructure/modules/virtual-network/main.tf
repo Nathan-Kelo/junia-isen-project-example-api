@@ -21,9 +21,9 @@ resource "azurerm_subnet" "private" {
 
   //private_endpoint_network_policies             = "Enabled"
   private_link_service_network_policies_enabled = false
-  
-  // following the tutorial there is no service endpoint needed ?
-  //service_endpoints = ["Microsoft.AzureCosmosDB"]
+
+  // This service endpoint is needed to create the private endpoint
+  service_endpoints = ["Microsoft.AzureCosmosDB"]
 }
 
 #Create subnet for the app service available publicly
@@ -40,6 +40,9 @@ resource "azurerm_subnet" "public" {
       name = "Microsoft.Web/serverFarms"
     }
   }
+  
+  service_endpoints = ["Microsoft.Web"]
+
 }
 
 resource "azurerm_subnet" "gateway_subnet" {
@@ -50,6 +53,8 @@ resource "azurerm_subnet" "gateway_subnet" {
 
   #I think /28 is also strongly recommended to allow auto scaling
   address_prefixes = ["10.0.4.0/28"]
+
+  service_endpoints = ["Microsoft.Web"]
 }
 
 # resource "azurerm_subnet" "firewall_subnet" {

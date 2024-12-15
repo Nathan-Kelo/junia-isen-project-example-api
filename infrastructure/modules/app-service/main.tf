@@ -19,9 +19,11 @@ resource "azurerm_linux_web_app" "app" {
   resource_group_name       = var.resource_group_name
   location                  = var.location
   service_plan_id           = azurerm_service_plan.linuxplan.id
-  virtual_network_subnet_id = var.subnet_id
+  virtual_network_subnet_id = var.app_subnet_id
   #Deactivate public access so that it must pass through the gateway instead
   public_network_access_enabled = true
+  
+
   #Pass the MongoDB URI to the application through the environment variables
   app_settings = tomap({
     MONGO_URL = var.mongo_connection_string
@@ -34,11 +36,30 @@ resource "azurerm_linux_web_app" "app" {
       docker_image_name   = "nathan-kelo/junia-isen-project-example-api:dev"
       docker_registry_url = "https://ghcr.io"
     }
+
+
+    # Ip restriction is inspired by these docs to route traffic through gateway
+    # https://github.com/Azure/azure-quickstart-templates/blob/master/quickstarts/microsoft.web/web-app-with-app-gateway-v2/azuredeploy.json
+
+    # Only accept from Gateway subnet
+    ip_restriction {
+      action                    = "Allow"
+      name                      = "appGatewaySubnet"
+      priority                  = 200
+      virtual_network_subnet_id = var.gateway_subnet_id
+      description = "Isolate traffic to subnet containing Azure Application Gateway."
+    }
+
+    # Restrict from anywhere else
+    ip_restriction_default_action = "Deny"
+
   }
   #Set the Managed Identity to System
   identity {
     type = "SystemAssigned"
   }
+
+
 
 }
 

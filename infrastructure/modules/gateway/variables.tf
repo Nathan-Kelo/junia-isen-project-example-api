@@ -14,6 +14,10 @@ variable "gateway_subnet_id" {
   type = string
 }
 
+variable "app_subnet_id" {
+  type = string
+}
+
 variable "app_service_fqdm" {
   type = string
 }

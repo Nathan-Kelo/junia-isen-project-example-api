@@ -8,7 +8,7 @@ resource "azurerm_public_ip" "ip" {
   sku               = "Standard"
 
   # Give same zones to IP as Application Gateway for redundancy
-  zones = [1,2,3]
+  zones = [1, 2, 3]
   lifecycle {
     create_before_destroy = true
   }
@@ -29,8 +29,8 @@ resource "azurerm_application_gateway" "gate" {
   name                = "gateway"
   resource_group_name = var.resource_group_name
   location            = var.location
-  zones = [1,2,3]
-  
+  zones               = [1, 2, 3]
+
   sku {
     name     = "WAF_v2"
     tier     = "WAF_v2"
@@ -70,18 +70,18 @@ resource "azurerm_application_gateway" "gate" {
     unhealthy_threshold = 1
     # We use the base path but should create a /health route only accessible to 
     # the gateway with whitelisting
-    path     = "/health"
-    protocol = "Http"
+    path                                      = "/health"
+    protocol                                  = "Http"
     pick_host_name_from_backend_http_settings = true
   }
 
   backend_http_settings {
     pick_host_name_from_backend_address = true
-    name                  = local.http_setting_name
-    cookie_based_affinity = "Disabled"
-    port                  = 80
-    protocol              = "Http"
-    probe_name            = local.probe_frontend_name
+    name                                = local.http_setting_name
+    cookie_based_affinity               = "Disabled"
+    port                                = 80
+    protocol                            = "Http"
+    probe_name                          = local.probe_frontend_name
   }
 
   http_listener {
