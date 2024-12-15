@@ -3,6 +3,8 @@ name: Terraform deploy
 on:
   workflow_dispatch:
   push:
+    branches-ignore:
+      -'feat/**'
 
 env:
   TF_LOG: INFO #for getting logs in case of error

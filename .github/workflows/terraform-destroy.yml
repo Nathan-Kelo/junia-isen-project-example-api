@@ -1,8 +1,7 @@
 name: Terraform Destroy
 
 on:
-  workflow_dispatch:  
-  push:
+  workflow_dispatch:
 
 env:
   TF_LOG: INFO
@@ -37,13 +36,16 @@ jobs:
         id: init
         run: terraform init
 
+      - name: Terraform Refresh
+        run: terraform refresh -var="subscription_id"=$SUBSCRIPTION_ID
+
       - name: Terraform Plan Destroy
         id: plan
         run: |
-          echo "Terraform Plan Destroy Output:"
-          echo "-------------------"
           terraform plan -destroy -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=destroy.tfplan
 
       - name: Terraform Destroy
         id: destroy
-        run: terraform apply -auto-approve -input=false -no-color destroy.tfplan
+        run: |
+          terraform apply -auto-approve -input=false destroy.tfplan
+          terraform show
