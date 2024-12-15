@@ -62,6 +62,8 @@ jobs:
           echo "-------------------"
           terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=build.tfplan
 
+        #Apply section
+
       - name: Terraform Apply
         id: apply
         continue-on-error: true
