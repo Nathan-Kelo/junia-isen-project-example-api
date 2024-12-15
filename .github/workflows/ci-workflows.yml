@@ -1,0 +1,83 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - dev
+      - combine-workflow
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  build:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/combine-workflow'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with: 
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract metadata for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    - name: Build the Docker image
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: "{{defaultContext}}:api"
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+
+  lint:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: ./api
+
+      - name: Run linter
+        run: flake8 ./api
+
+  test:
+    if: github.event_name == 'push' && github.event.push.base.ref == 'refs/heads/combine-workflow'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: ./api
+
+      - name: Run tests
+        run: pytest
+        working-directory: ./api
