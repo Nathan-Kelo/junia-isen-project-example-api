@@ -31,8 +31,8 @@ resource "azurerm_linux_web_app" "app" {
     # Monitoring configuration
     OTEL_RESOURCE_ATTRIBUTES    = "service.name=cloudcomputing",
     OTEL_EXPORTER_OTLP_ENDPOINT = "https://ingest.eu.signoz.cloud:443",
-    OTEL_EXPORTER_OTLP_HEADERS  = var.otel_exporter_otlp_headers
-    OTEL_EXPORTER_OTLP_PROTOCOL = grpc
+    OTEL_EXPORTER_OTLP_HEADERS  = var.otel_exporter_otlp_headers,
+    OTEL_EXPORTER_OTLP_PROTOCOL = "grpc"
     }
   )
 

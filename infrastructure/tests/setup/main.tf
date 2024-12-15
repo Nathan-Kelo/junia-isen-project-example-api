@@ -35,6 +35,7 @@ module "test_app_service" {
   cosmosdb_account_id     = module.test_database.cosmosdb_account_id
   app_subnet_id           = module.test_vnet.public_subnet_id
   gateway_subnet_id       = module.test_vnet.gateway_subnet_id
+  otel_exporter_otlp_headers = "dummy_value"
 }
 
 module "test_gateway" {
