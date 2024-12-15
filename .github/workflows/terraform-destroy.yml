@@ -40,6 +40,7 @@ jobs:
           -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
           -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
           -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}"
+        #giving backend config to access Azure State storage 
 
       - name: Terraform Refresh
         run: terraform refresh -var="subscription_id"=$AZURE_SUBSCRIPTION_ID
