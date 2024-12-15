@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches-ignore:
-      -'feat/**'
+      -'feat/deployment'
 
 env:
   TF_LOG: INFO #for getting logs in case of error

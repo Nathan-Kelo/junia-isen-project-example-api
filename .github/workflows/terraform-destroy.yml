@@ -34,7 +34,12 @@ jobs:
       
       - name: Terraform init
         id: init
-        run: terraform init
+        run: |
+          terraform init \
+          -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+          -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
+          -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
+          -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}"
 
       - name: Terraform Refresh
         run: terraform refresh -var="subscription_id"=$SUBSCRIPTION_ID
