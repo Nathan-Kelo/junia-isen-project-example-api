@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev
-      - combine_workflow
+      - feat/combine_workflow
   pull_request:
     branches:
       - dev
