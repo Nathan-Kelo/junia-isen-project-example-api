@@ -1,0 +1,57 @@
+name: Terraform destroy
+
+on:
+  workflow_dispatch:
+
+env:
+  TF_LOG: INFO
+  TF_INPUT: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infrastructure
+
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: 'Azure Login'
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform init
+        id: init
+        run: |
+          terraform init \
+          -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+          -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
+          -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
+          -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}"
+        #giving backend config to access Azure State storage 
+
+      - name: Terraform Refresh
+        run: terraform refresh -var="subscription_id"=$AZURE_SUBSCRIPTION_ID
+
+      - name: Terraform Plan Destroy
+        id: plan
+        run: |
+          terraform plan -destroy -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=destroy.tfplan
+
+      - name: Terraform Destroy
+        id: destroy
+        run: |
+          terraform apply -auto-approve -input=false destroy.tfplan
+          terraform show

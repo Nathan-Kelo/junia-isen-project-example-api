@@ -44,7 +44,7 @@ module "test_gateway" {
   location             = azurerm_resource_group.test_rg.location
   virtual_network_name = module.test_vnet.virtual_network_name
   gateway_subnet_id    = module.test_vnet.gateway_subnet_id
-  app_service_fqdm     = module.test_app_service.app_fqdm
+  app_service_fqdm     = module.test_app_service.app_url
   app_subnet_id        = module.test_vnet.public_subnet_id
 }
 
@@ -53,7 +53,7 @@ output "cosmos_url" {
 }
 
 output "app_url" {
-  value = module.test_app_service.app_fqdm
+  value = module.test_app_service.app_url
 }
 
 output "gateway_url" {
