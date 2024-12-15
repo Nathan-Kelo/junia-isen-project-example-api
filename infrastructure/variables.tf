@@ -8,3 +8,8 @@ variable "location" {
   description = "Server location for all resources."
   default     = "francecentral"
 }
+
+variable "otel_exporter_otlp_headers" {
+  type        = string
+  description = "Secret access token for application monitoring authentification."
+}

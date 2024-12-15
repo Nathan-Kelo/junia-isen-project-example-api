@@ -40,7 +40,7 @@ resource "azurerm_subnet" "public" {
       name = "Microsoft.Web/serverFarms"
     }
   }
-  
+
   service_endpoints = ["Microsoft.Web"]
 
 }

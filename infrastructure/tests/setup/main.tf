@@ -10,35 +10,51 @@ resource "azurerm_resource_group" "test_rg" {
   location = "francecentral"
 }
 
-#Create virtual network
-resource "azurerm_virtual_network" "test_vnet" {
+#Create the virtual network
+module "test_vnet" {
+  source              = "../../modules/virtual-network"
   resource_group_name = azurerm_resource_group.test_rg.name
   location            = azurerm_resource_group.test_rg.location
-  name                = "test-vnet"
-  address_space       = ["10.0.0.0/16"]
 }
 
-#Create subnet configured for private endpoints
-resource "azurerm_subnet" "test_private_subnet" {
+#Create the database
+module "test_database" {
+  source              = "../../modules/database"
+  resource_group_name = azurerm_resource_group.test_rg.name
+  location            = azurerm_resource_group.test_rg.location
+  private_subnet_id   = module.test_vnet.private_subnet_id
+  vnet_id             = module.test_vnet.virtual_network_id
+}
+
+#Create the app
+module "test_app_service" {
+  source                  = "../../modules/app-service"
+  resource_group_name     = azurerm_resource_group.test_rg.name
+  location                = azurerm_resource_group.test_rg.location
+  mongo_connection_string = module.test_database.connection_string
+  cosmosdb_account_id     = module.test_database.cosmosdb_account_id
+  app_subnet_id           = module.test_vnet.public_subnet_id
+  gateway_subnet_id       = module.test_vnet.gateway_subnet_id
+}
+
+module "test_gateway" {
+  source               = "../../modules/gateway"
   resource_group_name  = azurerm_resource_group.test_rg.name
-  virtual_network_name = azurerm_virtual_network.test_vnet.name
-  name                 = "test-private"
-  address_prefixes     = ["10.0.1.0/24"]
-
-  private_endpoint_network_policies             = "Enabled"
-  private_link_service_network_policies_enabled = false
-
-  service_endpoints = ["Microsoft.AzureCosmosDB"]
+  location             = azurerm_resource_group.test_rg.location
+  virtual_network_name = module.test_vnet.virtual_network_name
+  gateway_subnet_id    = module.test_vnet.gateway_subnet_id
+  app_service_fqdm     = module.test_app_service.app_fqdm
+  app_subnet_id        = module.test_vnet.public_subnet_id
 }
 
-output "resource_group_name" {
-  value = azurerm_resource_group.test_rg.name
+output "cosmos_url" {
+  value = module.test_database.cosmos_acc_endpoint
 }
 
-output "vnet_id" {
-  value = azurerm_virtual_network.test_vnet.id
+output "app_url" {
+  value = module.test_app_service.app_fqdm
 }
 
-output "private_subnet_id" {
-  value = azurerm_subnet.test_private_subnet.id
+output "gateway_url" {
+  value = module.test_gateway.gateway_frontend_ip
 }

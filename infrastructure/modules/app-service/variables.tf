@@ -25,3 +25,8 @@ variable "gateway_subnet_id" {
   type        = string
   description = "Virtual Network of the gateway to restrict access."
 }
+
+variable "otel_exporter_otlp_headers" {
+  type        = string
+  description = "Secret access token for application monitoring authentification."
+}

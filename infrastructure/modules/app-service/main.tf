@@ -22,11 +22,17 @@ resource "azurerm_linux_web_app" "app" {
   virtual_network_subnet_id = var.app_subnet_id
   #Deactivate public access so that it must pass through the gateway instead
   public_network_access_enabled = true
-  
 
-  #Pass the MongoDB URI to the application through the environment variables
+
+
   app_settings = tomap({
-    MONGO_URL = var.mongo_connection_string
+    # Pass the MongoDB URI to the application through the environment variables
+    MONGO_URL = var.mongo_connection_string,
+    # Monitoring configuration
+    OTEL_RESOURCE_ATTRIBUTES    = "service.name=cloudcomputing",
+    OTEL_EXPORTER_OTLP_ENDPOINT = "https://ingest.eu.signoz.cloud:443",
+    OTEL_EXPORTER_OTLP_HEADERS  = var.otel_exporter_otlp_headers
+    OTEL_EXPORTER_OTLP_PROTOCOL = grpc
     }
   )
 
@@ -47,7 +53,7 @@ resource "azurerm_linux_web_app" "app" {
       name                      = "appGatewaySubnet"
       priority                  = 200
       virtual_network_subnet_id = var.gateway_subnet_id
-      description = "Isolate traffic to subnet containing Azure Application Gateway."
+      description               = "Isolate traffic to subnet containing Azure Application Gateway."
     }
 
     # Restrict from anywhere else
