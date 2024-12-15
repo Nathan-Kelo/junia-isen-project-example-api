@@ -55,7 +55,13 @@ jobs:
           echo "-------------------"
           terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=build.tfplan
 
+      - name: Terraform Apply
+        id: apply
+        continue-on-error: true
+        if: steps.plan.outcome == 'success'
+        run: terraform apply -auto-approve -input=false -no-color build.tfplan
+      
 
-  
+      
 
             
