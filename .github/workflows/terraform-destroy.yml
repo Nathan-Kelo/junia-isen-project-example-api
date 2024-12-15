@@ -42,12 +42,12 @@ jobs:
           -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}"
 
       - name: Terraform Refresh
-        run: terraform refresh -var="subscription_id"=$SUBSCRIPTION_ID
+        run: terraform refresh -var="subscription_id"=$AZURE_SUBSCRIPTION_ID
 
       - name: Terraform Plan Destroy
         id: plan
         run: |
-          terraform plan -destroy -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=destroy.tfplan
+          terraform plan -destroy -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=destroy.tfplan
 
       - name: Terraform Destroy
         id: destroy
