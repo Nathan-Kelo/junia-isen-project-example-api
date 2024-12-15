@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches-ignore:
-      -'feat/deployment'
+      - 'feat/**'
 
 env:
   TF_LOG: INFO #for getting logs in case of error
@@ -53,17 +53,15 @@ jobs:
         run: terraform validate -no-color #checks syntax
 
         #Plan section
-
       - name: Generate and Show Plan
         id: plan
         if: success() || failure()
         run: |
           echo "Terraform Plan Output:"
           echo "-------------------"
-          terraform plan -var="subscription_id"=$SUBSCRIPTION_ID -no-color -out=build.tfplan
+          terraform plan -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=build.tfplan
 
         #Apply section
-
       - name: Terraform Apply
         id: apply
         continue-on-error: true
