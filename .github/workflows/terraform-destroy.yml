@@ -48,7 +48,7 @@ jobs:
       - name: Terraform Plan Destroy
         id: plan
         run: |
-          terraform plan -destroy -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=destroy.tfplan
+          terraform plan -destroy -var="subscription_id"=${{ secrets.AZURE_SUBSCRIPTION_ID }} -var="otel_exporter_otlp_headers=${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}" -no-color -out=destroy.tfplan
 
       - name: Terraform Destroy
         id: destroy

@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "Terraform Plan Output:"
           echo "-------------------"
-          terraform plan -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=build.tfplan
+          terraform plan -var="subscription_id"=${{ secrets.AZURE_SUBSCRIPTION_ID }} -var="otel_exporter_otlp_headers=${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}" -no-color -out=build.tfplan
 
         #Apply section
       - name: Terraform Apply
