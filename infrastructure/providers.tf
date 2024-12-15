@@ -14,7 +14,7 @@ terraform {
     resource_group_name  = "StateResourceGroup"
     storage_account_name = "statestorageaccount"
     container_name      = "state-container"
-    key                 = terraform.tfstate
+    key                 = "terraform.tfstate"
   }
 
 }
