@@ -10,6 +10,12 @@ terraform {
       version = "~>3"
     }
   }
+  backend "azurerm" {
+    resource_group_name  = "StateResourceGroup"
+    storage_account_name = "statestorageaccount"
+    container_name      = "state-container"
+    key                 = terraform.tfstate
+  }
 
 }
 
