@@ -12,7 +12,7 @@ This project demonstrates a simple application deployed on Azure using Terraform
 
 ### Prerequisites
 
-- Python 3.9 or later
+- Python 3.10 or later
 - Terraform 1.5 or later
 - Azure account
 
@@ -24,7 +24,13 @@ This project demonstrates a simple application deployed on Azure using Terraform
     pip install -r api/requirements.txt
     ```
 
-2. Run the app
+2. Setup Environmnent variables
+
+    |NAME|DESCRIPTION|DEFAULT|
+    |---|---|---|
+    |MONGO_URL|MongoDB uri to connect to an instance.||
+
+3. Run the app
   
     ```bash
     python api/app.py
@@ -44,12 +50,13 @@ This project demonstrates a simple application deployed on Azure using Terraform
     pytest api/tests
     ```
 
-### Infrastructure
+## Infrastructure
 
-The provisioned architecture creates an app service with a System Managed identity and a CosmosDB Database with a MongoDB instance. The CosmosDB is private only accessible through a private endpoint available in the private subnet. Furthermore the identity is assigned to a custom role with read and write access.
+  The provisioned architecture creates an app service with a System Managed identity and a CosmosDB Database with a MongoDB instance. The CosmosDB is private only accessible through a private endpoint available in the private subnet. Furthermore the identity is assigned to a custom role with read and write access.
 
-![architecture image](images/architecture.png)
+  ![architecture image](images/architecture.png)
 
-### Resources
+## Resources
 
-Used this [tutorial](https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions) for pushing docker image to packages.
+  Used this [tutorial](https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions) for pushing docker image to packages.
+  Used a variety of Azure documentation and videos from [John Savill](https://www.youtube.com/@NTFAQGuy) to help understand and provision correctly.

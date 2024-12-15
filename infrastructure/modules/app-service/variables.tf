@@ -16,7 +16,17 @@ variable "cosmosdb_account_id" {
   description = "CosmosDB account id to link and create system identity."
 }
 
-variable "subnet_id" {
+variable "app_subnet_id" {
   type        = string
   description = "Virtual Network Id to connect the App on"
+}
+
+variable "gateway_subnet_id" {
+  type        = string
+  description = "Virtual Network of the gateway to restrict access."
+}
+
+variable "otel_exporter_otlp_headers" {
+  type        = string
+  description = "Secret access token for application monitoring authentification."
 }

@@ -1,2 +1,3 @@
 subscription_id="<YOUR-AZURE-SUBSCRIPTION-ID-HERE>"
 location="francecentral"
+otel_exporter_otlp_headers = "<YOUR-TOKEN-HERE>"
