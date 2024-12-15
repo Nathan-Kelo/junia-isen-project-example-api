@@ -1,0 +1,75 @@
+name: Terraform deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - 'feat/**'
+
+env:
+  TF_LOG: INFO #for getting logs in case of error
+  TF_INPUT: false #disables user inputs
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infrastructure
+
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: 'Azure Login'
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform init
+        id: init
+        run: |
+          terraform init \
+          -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+          -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
+          -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
+          -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" 
+        #giving backend config to access Azure State storage 
+      
+      - name: Terraform Format
+        run: terraform fmt -check #checks formatting
+
+      - name: Terraform Validate
+        # Run even if formatting fails
+        if: success() || failure()
+        run: terraform validate -no-color #checks syntax
+
+        #Plan section
+      - name: Generate and Show Plan
+        id: plan
+        if: success() || failure()
+        run: |
+          echo "Terraform Plan Output:"
+          echo "-------------------"
+          terraform plan -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -no-color -out=build.tfplan
+
+        #Apply section
+      - name: Terraform Apply
+        id: apply
+        continue-on-error: true
+        if: steps.plan.outcome == 'success'
+        run: terraform apply -auto-approve -input=false -no-color build.tfplan
+      
+
+      
+
+            
