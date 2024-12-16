@@ -55,7 +55,8 @@ jobs:
         working-directory: ./api
   
   # Build Docker Image and publish to repo
-  build:
+  build:      
+    needs: test      
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -63,6 +64,10 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
 
     steps:
     - name: Checkout repository
@@ -87,10 +92,12 @@ jobs:
   
   # Deploy terraform infrastructure
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+
     env:
       TF_LOG: INFO #for getting logs in case of error
       TF_INPUT: false #disables user inputs
