@@ -5,6 +5,7 @@ on:
   push:
     branches-ignore:
       - 'feat/**'
+      - 'dev'
 
 env:
   TF_LOG: INFO #for getting logs in case of error
