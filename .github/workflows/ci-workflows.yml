@@ -91,9 +91,9 @@ jobs:
   
   # Deploy terraform infrastructure
   deploy:
-    needs: build
+    needs: [test, build]
     if: github.event_name == 'push'
-    
+
     runs-on: ubuntu-latest
     permissions:
       id-token: write
