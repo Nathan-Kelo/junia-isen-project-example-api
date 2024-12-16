@@ -43,7 +43,7 @@ jobs:
         #giving backend config to access Azure State storage 
 
       - name: Terraform Refresh
-        run: terraform refresh -var="subscription_id"=$AZURE_SUBSCRIPTION_ID
+        run: terraform refresh -var="subscription_id"=$AZURE_SUBSCRIPTION_ID -var="otel_exporter_otlp_headers=${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}"
 
       - name: Terraform Plan Destroy
         id: plan

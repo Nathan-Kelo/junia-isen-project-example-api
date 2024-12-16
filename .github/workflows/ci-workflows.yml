@@ -9,12 +9,11 @@ on:
     branches:
       - dev
       - main
-  workflow_dispatch:
+  workflow_dispatch:  #keep manual run in case
 
 jobs:
   # Python Linting
   lint:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +34,6 @@ jobs:
 
   # Python unit tests
   test:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +56,7 @@ jobs:
   # Build Docker Image and publish to repo
   build:      
     needs: test      
-    if: github.event_name == 'push'
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -93,7 +91,9 @@ jobs:
   
   # Deploy terraform infrastructure
   deploy:
-    needs: build
+    needs: [test, build]
+    if: github.event_name == 'push'
+
     runs-on: ubuntu-latest
     permissions:
       id-token: write
