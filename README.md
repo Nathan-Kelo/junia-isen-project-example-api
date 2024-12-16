@@ -1,6 +1,18 @@
-# Shop App API on Azure cloud
+# Shop App API on Azure cloud <!-- omit in toc -->
 
 This project demonstrates a simple application deployed on Azure using Terraform. Students will fork this repository to complete their assignments.
+
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Running the Application Locally](#running-the-application-locally)
+  - [Running the Tests Locally](#running-the-tests-locally)
+- [Overview](#overview)
+  - [Infrastructure](#infrastructure)
+  - [CI/CD](#cicd)
+  - [Monitoring](#monitoring)
+- [Resources](#resources)
+
 
 ## Project Structure
 
@@ -50,11 +62,29 @@ This project demonstrates a simple application deployed on Azure using Terraform
     pytest api/tests
     ```
 
-## Infrastructure
+## Overview
+
+### Infrastructure
 
   The provisioned architecture creates an app service with a System Managed identity and a CosmosDB Database with a MongoDB instance. The CosmosDB is private only accessible through a private endpoint available in the private subnet. Furthermore the identity is assigned to a custom role with read and write access.
 
   ![architecture image](images/architecture.png)
+
+### CI/CD
+
+  Our project uses a single main workflow ci-workflows.yml to run 4 different stages : lint, test, build and deploy.
+  During the deploy job we use a service account created using a Free account to provision resource through the CI/CD since the JUNIA Tenant
+  blocks access to our Client Secrets required to authenticate inside of a pipeline.
+
+  ![service account use](images/service_account.png)
+
+### Monitoring
+
+  To respect the monitoring requirement we chose OpenTelemetry as our solution. The neccessary environmnet variable are passed
+  through the app_settings option in terraform with the access token being a github secret. Below is an example of our project
+  metrics after 24h of deployment.
+  
+  ![monitoring dashboard](images/monitoring.png)
 
 ## Resources
 
